@@ -1,0 +1,61 @@
+{
+  "validUser": {
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "Test User",
+    "phone": "+1234567890",
+    "website": "https://example.com",
+    "location": "New York, USA",
+    "bio": "This is a test user bio."
+  },
+  "adminUser": {
+    "email": "admin@example.com",
+    "password": "admin123",
+    "name": "Admin User",
+    "role": "admin"
+  },
+  "invalidUser": {
+    "email": "invalid@example.com",
+    "password": "wrongpassword"
+  },
+  "newUser": {
+    "name": "New User",
+    "email": "newuser@example.com",
+    "password": "NewPassword123",
+    "confirmPassword": "NewPassword123"
+  },
+  "existingUser": {
+    "name": "Existing User",
+    "email": "existing@example.com",
+    "password": "ExistingPassword123",
+    "confirmPassword": "ExistingPassword123"
+  },
+  "userWithWeakPassword": {
+    "name": "Weak Password User",
+    "email": "weak@example.com",
+    "password": "123",
+    "confirmPassword": "123"
+  },
+  "userWithMismatchedPasswords": {
+    "name": "Mismatched User",
+    "email": "mismatch@example.com",
+    "password": "Password123",
+    "confirmPassword": "DifferentPassword123"
+  },
+  "profileUpdateData": {
+    "name": "Updated Name",
+    "email": "updated@example.com",
+    "phone": "+9876543210",
+    "website": "https://updated-example.com",
+    "location": "San Francisco, USA",
+    "bio": "This is an updated bio with more information about the user."
+  },
+  "invalidProfileData": {
+    "name": "",
+    "email": "invalid-email",
+    "phone": "invalid-phone",
+    "website": "invalid-url",
+    "location": "a".repeat(101),
+    "bio": "a".repeat(501)
+  }
+}

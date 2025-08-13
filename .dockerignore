@@ -1,0 +1,108 @@
+# 排除不需要的檔案和目錄
+
+# 依賴目錄
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 建置輸出
+.next/
+out/
+dist/
+build/
+
+# 測試相關
+coverage/
+test-results/
+playwright-report/
+.nyc_output
+
+# 環境變數檔案
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 日誌檔案
+*.log
+logs/
+
+# 編輯器和 IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 作業系統檔案
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git 相關
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD 相關
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# Docker 相關
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# 文檔
+README.md
+CHANGELOG.md
+LICENSE
+docs/
+
+# 開發工具配置
+.eslintrc*
+.prettierrc*
+.editorconfig
+.husky/
+.lintstagedrc*
+.commitlintrc*
+.cz-config.js
+
+# 測試配置
+vitest.config.ts
+playwright.config.ts
+jest.config.js
+
+# 其他配置檔案
+tsconfig.json
+tailwind.config.js
+postcss.config.js
+next.config.js
+
+# 臨時檔案
+tmp/
+temp/
+.tmp/
+
+# 快取
+.cache/
+.parcel-cache/
+
+# 部署相關
+deployment/
+scripts/
+
+# 監控配置
+lighthouserc.js
+sonar-project.properties
+
+# Azure 相關
+web.config

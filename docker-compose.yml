@@ -1,0 +1,106 @@
+# Docker Compose 配置 - 開發環境
+
+version: '3.8'
+
+services:
+  # Next.js 應用程式
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: nextjs-enterprise-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_NAME=Next.js Enterprise App
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=your-secret-key-here
+    volumes:
+      # 開發時可以掛載原始碼 (可選)
+      # - .:/app
+      # - /app/node_modules
+      # - /app/.next
+      - app-data:/app/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - redis
+      - postgres
+
+  # Redis (快取和 session 儲存)
+  redis:
+    image: redis:7-alpine
+    container_name: nextjs-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL 資料庫 (可選)
+  postgres:
+    image: postgres:15-alpine
+    container_name: nextjs-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=nextjs_app
+      - POSTGRES_USER=nextjs_user
+      - POSTGRES_PASSWORD=nextjs_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nextjs_user -d nextjs_app"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx 反向代理 (可選)
+  nginx:
+    image: nginx:alpine
+    container_name: nextjs-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - nextjs-app
+
+volumes:
+  app-data:
+    driver: local
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

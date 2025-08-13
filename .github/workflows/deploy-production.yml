@@ -1,0 +1,356 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - hotfix
+      skip_tests:
+        description: 'Skip tests (emergency deployment only)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20.x'
+  AZURE_WEBAPP_NAME: 'nextjs-app-production'
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+
+jobs:
+  # 執行完整的 CI 檢查
+  ci-checks:
+    name: Full CI Pipeline
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+    if: ${{ !github.event.inputs.skip_tests }}
+
+  # 生產環境部署前檢查
+  pre-deployment-checks:
+    name: Pre-deployment Checks
+    runs-on: ubuntu-latest
+    needs: [ci-checks]
+    if: ${{ always() && (needs.ci-checks.result == 'success' || github.event.inputs.skip_tests == 'true') }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Verify branch protection
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "✅ Deploying from main branch"
+        elif [[ "${{ github.event_name }}" == "release" ]]; then
+          echo "✅ Deploying from release: ${{ github.event.release.tag_name }}"
+        else
+          echo "⚠️ Manual deployment triggered"
+        fi
+    
+    - name: Check for breaking changes
+      run: |
+        # 檢查是否有重大變更標記
+        if git log --oneline -10 | grep -i "BREAKING CHANGE\|breaking:"; then
+          echo "⚠️ Breaking changes detected - manual review required"
+          echo "breaking_changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "✅ No breaking changes detected"
+          echo "breaking_changes=false" >> $GITHUB_OUTPUT
+        fi
+      id: breaking_changes
+    
+    - name: Security scan
+      run: |
+        npm audit --audit-level=critical
+        echo "✅ Security scan completed"
+
+  # 建立部署批准
+  deployment-approval:
+    name: Deployment Approval
+    runs-on: ubuntu-latest
+    needs: [pre-deployment-checks]
+    environment:
+      name: production-approval
+    if: ${{ github.event_name != 'workflow_dispatch' }}
+    
+    steps:
+    - name: Manual approval required
+      run: echo "Manual approval completed for production deployment"
+
+  # 生產環境部署
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [pre-deployment-checks, deployment-approval]
+    if: ${{ always() && needs.pre-deployment-checks.result == 'success' && (needs.deployment-approval.result == 'success' || github.event_name == 'workflow_dispatch') }}
+    
+    environment:
+      name: production
+      url: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci --only=production
+    
+    - name: Build application
+      run: npm run build
+      env:
+        NEXT_PUBLIC_APP_NAME: ${{ secrets.PROD_APP_NAME }}
+        NEXT_PUBLIC_APP_URL: ${{ secrets.PROD_APP_URL }}
+        NEXT_PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+        NEXTAUTH_SECRET: ${{ secrets.PROD_NEXTAUTH_SECRET }}
+        NEXTAUTH_URL: ${{ secrets.PROD_NEXTAUTH_URL }}
+        GOOGLE_CLIENT_ID: ${{ secrets.PROD_GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.PROD_GOOGLE_CLIENT_SECRET }}
+        NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.PROD_SENTRY_DSN }}
+        SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+    
+    - name: Create optimized deployment package
+      run: |
+        mkdir -p deployment
+        
+        # 複製必要檔案
+        cp -r .next deployment/
+        cp -r public deployment/
+        cp package.json deployment/
+        cp package-lock.json deployment/
+        cp next.config.js deployment/
+        
+        # 如果有 standalone 建置
+        if [ -d ".next/standalone" ]; then
+          cp -r .next/standalone/* deployment/
+          cp -r .next/static deployment/.next/
+        fi
+        
+        # 移除開發依賴
+        cd deployment
+        npm prune --production
+        
+        # 壓縮靜態資源
+        find public -name "*.js" -o -name "*.css" | xargs gzip -k
+    
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
+    
+    - name: Create deployment slot
+      run: |
+        az webapp deployment slot create \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --slot staging-slot \
+          --configuration-source ${{ env.AZURE_WEBAPP_NAME }}
+    
+    - name: Deploy to staging slot
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        slot-name: staging-slot
+        package: './deployment'
+        startup-command: 'npm start'
+    
+    - name: Configure staging slot settings
+      uses: azure/appservice-settings@v1
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        slot-name: staging-slot
+        app-settings-json: |
+          [
+            {
+              "name": "NEXT_PUBLIC_APP_NAME",
+              "value": "${{ secrets.PROD_APP_NAME }}"
+            },
+            {
+              "name": "NEXT_PUBLIC_APP_URL",
+              "value": "${{ secrets.PROD_APP_URL }}"
+            },
+            {
+              "name": "NEXTAUTH_SECRET",
+              "value": "${{ secrets.PROD_NEXTAUTH_SECRET }}"
+            },
+            {
+              "name": "NEXTAUTH_URL",
+              "value": "${{ secrets.PROD_NEXTAUTH_URL }}"
+            },
+            {
+              "name": "NODE_ENV",
+              "value": "production"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "20.x"
+            }
+          ]
+    
+    - name: Warm up staging slot
+      run: |
+        echo "Warming up staging slot..."
+        sleep 60
+        
+        # 健康檢查
+        for i in {1..5}; do
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}-staging-slot.azurewebsites.net/api/health)
+          if [ $response -eq 200 ]; then
+            echo "✅ Staging slot health check passed"
+            break
+          else
+            echo "⏳ Attempt $i: Health check returned $response, retrying..."
+            sleep 30
+          fi
+          
+          if [ $i -eq 5 ]; then
+            echo "❌ Staging slot health check failed after 5 attempts"
+            exit 1
+          fi
+        done
+    
+    - name: Run production smoke tests
+      run: |
+        npm ci
+        npx playwright install --with-deps chromium
+        npx playwright test tests/e2e/auth/login.spec.ts --project=chromium
+      env:
+        PLAYWRIGHT_BASE_URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging-slot.azurewebsites.net
+    
+    - name: Swap to production
+      run: |
+        echo "Swapping staging slot to production..."
+        az webapp deployment slot swap \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --slot staging-slot \
+          --target-slot production
+    
+    - name: Final health check
+      run: |
+        echo "Final production health check..."
+        sleep 30
+        
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/api/health)
+        if [ $response -eq 200 ]; then
+          echo "✅ Production health check passed"
+        else
+          echo "❌ Production health check failed with status: $response"
+          
+          # 自動回滾
+          echo "Initiating automatic rollback..."
+          az webapp deployment slot swap \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --slot staging-slot \
+            --target-slot production
+          
+          exit 1
+        fi
+    
+    - name: Clean up staging slot
+      if: success()
+      run: |
+        az webapp deployment slot delete \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --slot staging-slot
+
+  # 部署後驗證
+  post-deployment-tests:
+    name: Post-deployment Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright
+      run: npx playwright install --with-deps
+    
+    - name: Run full E2E test suite
+      run: npx playwright test --project=chromium
+      env:
+        PLAYWRIGHT_BASE_URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
+    
+    - name: Performance audit
+      run: |
+        npm install -g lighthouse
+        lighthouse https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net \
+          --output=json \
+          --output-path=./lighthouse-report.json \
+          --chrome-flags="--headless --no-sandbox"
+        
+        # 檢查效能分數
+        performance_score=$(cat lighthouse-report.json | jq '.categories.performance.score * 100')
+        echo "Performance Score: $performance_score"
+        
+        if (( $(echo "$performance_score < 80" | bc -l) )); then
+          echo "⚠️ Performance score below 80: $performance_score"
+        else
+          echo "✅ Performance score acceptable: $performance_score"
+        fi
+
+  # 通知部署結果
+  notify-production-deployment:
+    name: Notify Production Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-production, post-deployment-tests]
+    if: always()
+    
+    steps:
+    - name: Notify successful deployment
+      if: ${{ needs.deploy-production.result == 'success' && needs.post-deployment-tests.result == 'success' }}
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        text: |
+          🎉 Production deployment successful!
+          
+          🔗 URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
+          📝 Commit: ${{ github.sha }}
+          👤 Author: ${{ github.actor }}
+          
+          ✅ All post-deployment tests passed
+          📊 Performance audit completed
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+    
+    - name: Notify failed deployment
+      if: ${{ needs.deploy-production.result == 'failure' || needs.post-deployment-tests.result == 'failure' }}
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: |
+          🚨 Production deployment failed!
+          
+          📝 Commit: ${{ github.sha }}
+          👤 Author: ${{ github.actor }}
+          
+          🔄 Automatic rollback may have been triggered
+          Please check the GitHub Actions logs immediately.
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}

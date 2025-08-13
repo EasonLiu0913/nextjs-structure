@@ -1,0 +1,140 @@
+{
+  "HomePage": {
+    "title": "Welcome to Next.js 15 Enterprise App",
+    "description": "A modern, full-stack application built with the latest technologies",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "features": {
+      "nextjs": {
+        "title": "Next.js 15",
+        "description": "Latest version with App Router and Server Components",
+        "content": "Built with the newest features including Server Actions and improved performance."
+      },
+      "ui": {
+        "title": "Modern UI",
+        "description": "Beautiful components with Tailwind CSS and shadcn/ui",
+        "content": "Responsive design with dark mode support and smooth animations."
+      },
+      "auth": {
+        "title": "Authentication",
+        "description": "Secure authentication with NextAuth.js",
+        "content": "Multiple providers support with session management and protection."
+      },
+      "i18n": {
+        "title": "Internationalization",
+        "description": "Multi-language support with next-intl",
+        "content": "Seamless language switching with proper routing and SEO."
+      },
+      "monitoring": {
+        "title": "Analytics & Monitoring",
+        "description": "Comprehensive tracking with Vercel Analytics and Sentry",
+        "content": "Real-time insights and error tracking for better user experience."
+      },
+      "testing": {
+        "title": "Testing",
+        "description": "Complete testing setup with Vitest and Playwright",
+        "content": "Unit tests, integration tests, and end-to-end testing coverage."
+      }
+    }
+  },
+  "Navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "Auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back! Please sign in to your account.",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join us today! Create your account to get started.",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "createAccount": "Create Account",
+      "creatingAccount": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome back! Here's what's happening with your account.",
+    "stats": {
+      "users": "Total Users",
+      "revenue": "Revenue",
+      "orders": "Orders",
+      "activity": "Activity"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "description": "Your latest account activity"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Common tasks and shortcuts",
+      "users": "Manage Users",
+      "reports": "View Reports",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    }
+  },
+  "Profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account settings and preferences.",
+    "personalInfo": {
+      "title": "Personal Information",
+      "description": "Update your personal details and contact information."
+    },
+    "form": {
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "website": "Website",
+      "websitePlaceholder": "Enter your website URL",
+      "location": "Location",
+      "locationPlaceholder": "Enter your location",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us about yourself",
+      "save": "Save Changes",
+      "saving": "Saving..."
+    }
+  },
+  "Footer": {
+    "description": "A modern Next.js application with enterprise features.",
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "documentation": "Documentation",
+    "company": "Company",
+    "about": "About",
+    "contact": "Contact",
+    "careers": "Careers",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "rights": "All rights reserved."
+  }
+}

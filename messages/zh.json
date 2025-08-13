@@ -1,0 +1,140 @@
+{
+  "HomePage": {
+    "title": "歡迎使用 Next.js 15 企業級應用",
+    "description": "使用最新技術構建的現代化全端應用程式",
+    "getStarted": "開始使用",
+    "learnMore": "了解更多",
+    "features": {
+      "nextjs": {
+        "title": "Next.js 15",
+        "description": "具有 App Router 和 Server Components 的最新版本",
+        "content": "使用最新功能構建，包括 Server Actions 和改進的性能。"
+      },
+      "ui": {
+        "title": "現代化 UI",
+        "description": "使用 Tailwind CSS 和 shadcn/ui 的精美組件",
+        "content": "響應式設計，支援深色模式和流暢動畫。"
+      },
+      "auth": {
+        "title": "身份驗證",
+        "description": "使用 NextAuth.js 的安全身份驗證",
+        "content": "支援多種提供者，具有會話管理和保護功能。"
+      },
+      "i18n": {
+        "title": "國際化",
+        "description": "使用 next-intl 的多語言支援",
+        "content": "無縫語言切換，具有適當的路由和 SEO。"
+      },
+      "monitoring": {
+        "title": "分析與監控",
+        "description": "使用 Vercel Analytics 和 Sentry 的全面追蹤",
+        "content": "即時洞察和錯誤追蹤，提供更好的使用者體驗。"
+      },
+      "testing": {
+        "title": "測試",
+        "description": "使用 Vitest 和 Playwright 的完整測試設定",
+        "content": "單元測試、整合測試和端到端測試覆蓋。"
+      }
+    }
+  },
+  "Navigation": {
+    "home": "首頁",
+    "dashboard": "儀表板",
+    "profile": "個人資料",
+    "settings": "設定",
+    "logout": "登出"
+  },
+  "Auth": {
+    "login": {
+      "title": "登入",
+      "subtitle": "歡迎回來！請登入您的帳戶。",
+      "email": "電子郵件",
+      "emailPlaceholder": "輸入您的電子郵件",
+      "password": "密碼",
+      "passwordPlaceholder": "輸入您的密碼",
+      "signIn": "登入",
+      "signingIn": "登入中...",
+      "forgotPassword": "忘記密碼？",
+      "noAccount": "還沒有帳戶？",
+      "signUp": "註冊"
+    },
+    "register": {
+      "title": "建立帳戶",
+      "subtitle": "加入我們！建立您的帳戶開始使用。",
+      "name": "姓名",
+      "namePlaceholder": "輸入您的姓名",
+      "email": "電子郵件",
+      "emailPlaceholder": "輸入您的電子郵件",
+      "password": "密碼",
+      "passwordPlaceholder": "建立密碼",
+      "confirmPassword": "確認密碼",
+      "confirmPasswordPlaceholder": "確認您的密碼",
+      "createAccount": "建立帳戶",
+      "creatingAccount": "建立帳戶中...",
+      "hasAccount": "已經有帳戶？",
+      "signIn": "登入"
+    }
+  },
+  "Dashboard": {
+    "title": "儀表板",
+    "subtitle": "歡迎回來！這是您帳戶的最新動態。",
+    "stats": {
+      "users": "總使用者數",
+      "revenue": "收入",
+      "orders": "訂單",
+      "activity": "活動"
+    },
+    "recentActivity": {
+      "title": "最近活動",
+      "description": "您最新的帳戶活動"
+    },
+    "quickActions": {
+      "title": "快速操作",
+      "description": "常用任務和快捷方式",
+      "users": "管理使用者",
+      "reports": "查看報告",
+      "analytics": "分析",
+      "settings": "設定"
+    }
+  },
+  "Profile": {
+    "title": "個人資料",
+    "subtitle": "管理您的帳戶設定和偏好。",
+    "personalInfo": {
+      "title": "個人資訊",
+      "description": "更新您的個人詳細資料和聯絡資訊。"
+    },
+    "form": {
+      "name": "姓名",
+      "namePlaceholder": "輸入您的姓名",
+      "email": "電子郵件地址",
+      "emailPlaceholder": "輸入您的電子郵件地址",
+      "phone": "電話號碼",
+      "phonePlaceholder": "輸入您的電話號碼",
+      "website": "網站",
+      "websitePlaceholder": "輸入您的網站網址",
+      "location": "地點",
+      "locationPlaceholder": "輸入您的地點",
+      "bio": "個人簡介",
+      "bioPlaceholder": "介紹一下您自己",
+      "save": "儲存變更",
+      "saving": "儲存中..."
+    }
+  },
+  "Footer": {
+    "description": "具有企業級功能的現代化 Next.js 應用程式。",
+    "product": "產品",
+    "features": "功能",
+    "pricing": "價格",
+    "documentation": "文件",
+    "company": "公司",
+    "about": "關於",
+    "contact": "聯絡",
+    "careers": "職涯",
+    "legal": "法律",
+    "privacy": "隱私政策",
+    "terms": "服務條款",
+    "cookies": "Cookie 政策",
+    "rights": "版權所有。"
+  }
+}

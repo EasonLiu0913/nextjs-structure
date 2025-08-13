@@ -1,0 +1,28 @@
+# 開發環境 Dockerfile
+
+FROM node:20-alpine
+
+# 安裝必要的系統依賴
+RUN apk add --no-cache libc6-compat git
+
+# 設定工作目錄
+WORKDIR /app
+
+# 複製 package 文件
+COPY package*.json ./
+
+# 安裝依賴
+RUN npm ci
+
+# 複製原始碼
+COPY . .
+
+# 設定環境變數
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 暴露端口
+EXPOSE 3000
+
+# 啟動開發服務器
+CMD ["npm", "run", "dev"]
