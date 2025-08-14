@@ -12,7 +12,7 @@ export function useAuth() {
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
       setUser({
-        id: session.user.id || '',
+        id: (session.user as any).id || '',
         email: session.user.email || '',
         name: session.user.name || '',
         avatar: session.user.image || undefined

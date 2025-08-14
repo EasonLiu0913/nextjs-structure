@@ -1,19 +1,63 @@
+// 檢查 analytics 是否可用
+function isAnalyticsAvailable(): boolean {
+  return typeof window !== 'undefined' && 
+         !!(window as any).va && 
+         typeof (window as any).va === 'function'
+}
+
+// 等待 analytics 初始化
+function waitForAnalytics(timeout = 5000): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (isAnalyticsAvailable()) {
+      resolve(true)
+      return
+    }
+
+    const startTime = Date.now()
+    const checkInterval = setInterval(() => {
+      if (isAnalyticsAvailable()) {
+        clearInterval(checkInterval)
+        resolve(true)
+      } else if (Date.now() - startTime > timeout) {
+        clearInterval(checkInterval)
+        resolve(false)
+      }
+    }, 100)
+  })
+}
+
 // 自訂事件追蹤
 export function trackEvent(
   name: string, 
   properties?: Record<string, string | number | boolean>
 ) {
-  if (typeof window !== 'undefined' && window.va) {
-    window.va('track', name, properties)
+  if (!isAnalyticsAvailable()) {
+    // 在開發模式下記錄事件（可選）
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Analytics Event (dev):', name, properties)
+    }
+    return
+  }
+
+  try {
+    // 確保 properties 是有效的對象
+    const safeProperties = properties && typeof properties === 'object' ? properties : {}
+    ;(window as any).va('event', name, safeProperties)
+  } catch (error) {
+    console.warn('Analytics tracking failed:', error)
   }
 }
 
 // 頁面瀏覽追蹤
-export function trackPageView(page: string, properties?: Record<string, any>) {
-  trackEvent('page_view', {
-    page,
-    ...properties
-  })
+export async function trackPageView(page: string, properties?: Record<string, any>) {
+  // 等待 analytics 準備就緒
+  const isReady = await waitForAnalytics()
+  if (isReady) {
+    trackEvent('page_view', {
+      page,
+      ...properties
+    })
+  }
 }
 
 // 使用者行為追蹤

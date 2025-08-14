@@ -68,9 +68,9 @@ test.describe('Complete User Flow', () => {
     await expect(page).toHaveURL(/\/en\/login/)
     
     // 2. 嘗試使用錯誤的認證資訊登入
-    const { invalidCredentials } = userData
-    await page.fill('input[type="email"]', invalidCredentials.email)
-    await page.fill('input[type="password"]', invalidCredentials.password)
+    const { invalidUser } = userData
+    await page.fill('input[type="email"]', invalidUser.email)
+    await page.fill('input[type="password"]', invalidUser.password)
     await page.click('button[type="submit"]')
     
     // 檢查錯誤訊息

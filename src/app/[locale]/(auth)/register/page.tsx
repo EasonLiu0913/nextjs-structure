@@ -1,13 +1,14 @@
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { RegisterForm } from '@/components/auth/register-form'
 import Link from 'next/link'
 
 interface RegisterPageProps {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
-export default function RegisterPage({ params: { locale } }: RegisterPageProps) {
-  const t = useTranslations('Auth')
+export default async function RegisterPage({ params }: RegisterPageProps) {
+  const { locale } = await params
+  const t = await getTranslations('Auth')
 
   return (
     <div className="space-y-6">

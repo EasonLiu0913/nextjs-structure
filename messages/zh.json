@@ -118,7 +118,101 @@
       "bio": "個人簡介",
       "bioPlaceholder": "介紹一下您自己",
       "save": "儲存變更",
-      "saving": "儲存中..."
+      "saving": "儲存中...",
+      "updateSuccess": "個人資料更新成功！",
+      "unexpectedError": "發生未預期的錯誤",
+      "loadError": "載入個人資料失敗"
+    }
+  },
+  "Settings": {
+    "title": "設定",
+    "description": "管理您的帳戶設定和偏好",
+    "navigation": {
+      "profile": "個人資料",
+      "preferences": "偏好設定",
+      "security": "安全設定",
+      "avatar": "頭像",
+      "data": "資料"
+    },
+    "profile": {
+      "title": "個人資料設定",
+      "description": "管理您的個人資訊和帳戶詳細資料",
+      "error": "載入個人資料設定失敗",
+      "retry": "重試"
+    },
+    "preferences": {
+      "title": "偏好設定",
+      "description": "自訂您的帳戶偏好和使用體驗",
+      "save": "儲存偏好設定",
+      "saving": "儲存中...",
+      "updateSuccess": "偏好設定更新成功",
+      "updateError": "偏好設定更新失敗",
+      "unexpectedError": "發生未預期的錯誤",
+      "language": {
+        "title": "語言與顯示",
+        "description": "設定您的語言和顯示偏好",
+        "label": "語言",
+        "placeholder": "選擇語言",
+        "help": "選擇您偏好的介面語言"
+      },
+      "theme": {
+        "label": "主題",
+        "placeholder": "選擇主題",
+        "help": "選擇您偏好的顏色主題",
+        "preview": "即時預覽",
+        "light": "淺色",
+        "dark": "深色",
+        "system": "系統"
+      },
+      "timezone": {
+        "label": "時區",
+        "placeholder": "選擇時區",
+        "help": "選擇您的時區以正確顯示日期和時間"
+      },
+      "notifications": {
+        "title": "通知設定",
+        "description": "管理您接收通知的方式",
+        "email": {
+          "label": "電子郵件通知",
+          "description": "透過電子郵件接收通知"
+        },
+        "push": {
+          "label": "推播通知",
+          "description": "在瀏覽器中接收推播通知"
+        },
+        "marketing": {
+          "label": "行銷郵件",
+          "description": "接收促銷郵件和更新資訊"
+        }
+      },
+      "privacy": {
+        "title": "隱私設定",
+        "description": "控制您的隱私和可見性設定",
+        "profilePublic": {
+          "label": "公開個人資料",
+          "description": "讓其他使用者可以看到您的個人資料"
+        },
+        "showEmail": {
+          "label": "顯示電子郵件",
+          "description": "在您的個人資料中顯示電子郵件地址"
+        },
+        "allowMessages": {
+          "label": "允許訊息",
+          "description": "允許其他使用者向您發送訊息"
+        }
+      }
+    },
+    "security": {
+      "title": "安全設定",
+      "description": "管理您的帳戶安全和隱私設定"
+    },
+    "avatar": {
+      "title": "頭像管理",
+      "description": "上傳和管理您的個人頭像"
+    },
+    "data": {
+      "title": "資料管理",
+      "description": "匯出和管理您的個人資料"
     }
   },
   "Footer": {

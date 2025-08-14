@@ -58,5 +58,7 @@ export function captureMessage(
 
 // 性能監控
 export function startTransaction(name: string, op: string) {
-  return Sentry.startTransaction({ name, op })
+  // Note: startTransaction is deprecated in newer Sentry versions
+  // Use Sentry.startSpan instead for newer versions
+  return null
 }

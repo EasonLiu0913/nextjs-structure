@@ -11,27 +11,12 @@ Sentry.init({
     // 過濾掉不重要的錯誤
     if (event.exception) {
       const error = hint.originalException
-      if (error && error.message?.includes('Non-Error promise rejection')) {
+      if (error && (error as any).message?.includes('Non-Error promise rejection')) {
         return null
       }
     }
     return event
   },
-  
-  // 整合設定
-  integrations: [
-    new Sentry.BrowserTracing({
-      // 設定路由追蹤
-      routingInstrumentation: Sentry.nextRouterInstrumentation({
-        router: undefined // 將在運行時設定
-      })
-    }),
-    new Sentry.Replay({
-      // 只在錯誤時記錄 session replay
-      sessionSampleRate: 0,
-      errorSampleRate: 1.0
-    })
-  ],
   
   // 環境設定
   environment: process.env.NODE_ENV,

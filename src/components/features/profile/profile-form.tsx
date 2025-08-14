@@ -3,9 +3,9 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { userProfileSchema, type UserProfileInput } from '@/schemas/user-schema'
-import { updateProfileAction } from '@/actions/user-actions'
+import { updateProfileAction, getUserProfileAction } from '@/actions/user-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -19,6 +19,7 @@ export function ProfileForm() {
     const t = useTranslations('Profile.form')
     const [serverError, setServerError] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
 
     const form = useForm<UserProfileInput>({
         resolver: zodResolver(userProfileSchema),
@@ -32,13 +33,45 @@ export function ProfileForm() {
         }
     })
 
+    // Load existing user profile data
+    useEffect(() => {
+        const loadUserProfile = async () => {
+            try {
+                setIsLoading(true)
+                const result = await getUserProfileAction()
+                
+                if (result?.success && result.data) {
+                    form.reset({
+                        name: result.data.name || '',
+                        email: result.data.email || '',
+                        phone: result.data.phone || '',
+                        bio: result.data.bio || '',
+                        website: result.data.website || '',
+                        location: result.data.location || ''
+                    })
+                } else if (result?.error) {
+                    setServerError(result.error)
+                }
+            } catch (error) {
+                console.error('Failed to load user profile:', error)
+                setServerError(t('loadError'))
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        loadUserProfile()
+    }, [form, t])
+
     const onSubmit = async (data: UserProfileInput) => {
         setServerError(null)
         setSuccessMessage(null)
 
         const formData = new FormData()
         Object.entries(data).forEach(([key, value]) => {
-            if (value) formData.append(key, value)
+            if (value !== undefined && value !== '') {
+                formData.append(key, value)
+            }
         })
 
         try {
@@ -46,11 +79,14 @@ export function ProfileForm() {
 
             if (result?.error) {
                 setServerError(result.error)
+                return
             }
-            if (result?.success) {
-                setSuccessMessage(result.success)
-            }
+
             if (result?.fieldErrors) {
+                // Clear any existing server error when we have field errors
+                setServerError(null)
+                
+                // Set field-specific errors
                 Object.entries(result.fieldErrors).forEach(([field, errors]) => {
                     if (errors && Array.isArray(errors) && errors.length > 0) {
                         form.setError(field as keyof UserProfileInput, {
@@ -58,10 +94,70 @@ export function ProfileForm() {
                         })
                     }
                 })
+                return
+            }
+
+            if (result?.success) {
+                setSuccessMessage(t('updateSuccess'))
+                
+                // Update form with the returned data if available
+                if (result.data) {
+                    form.reset({
+                        name: result.data.name || '',
+                        email: result.data.email || '',
+                        phone: result.data.phone || '',
+                        bio: result.data.bio || '',
+                        website: result.data.website || '',
+                        location: result.data.location || ''
+                    })
+                }
+                
+                // Clear success message after 5 seconds
+                setTimeout(() => setSuccessMessage(null), 5000)
             }
         } catch (error) {
-            setServerError('An unexpected error occurred')
+            console.error('Profile update error:', error)
+            setServerError(t('unexpectedError'))
         }
+    }
+
+    // Show loading state while fetching user data
+    if (isLoading) {
+        return (
+            <div className="w-full space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                        <div className="h-10 w-full bg-muted animate-pulse rounded" />
+                    </div>
+                    <div className="space-y-2">
+                        <div className="h-4 w-20 bg-muted animate-pulse rounded" />
+                        <div className="h-10 w-full bg-muted animate-pulse rounded" />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+                        <div className="h-10 w-full bg-muted animate-pulse rounded" />
+                    </div>
+                    <div className="space-y-2">
+                        <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                        <div className="h-10 w-full bg-muted animate-pulse rounded" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <div className="h-4 w-20 bg-muted animate-pulse rounded" />
+                    <div className="h-10 w-full bg-muted animate-pulse rounded" />
+                </div>
+                <div className="space-y-2">
+                    <div className="h-4 w-12 bg-muted animate-pulse rounded" />
+                    <div className="h-24 w-full bg-muted animate-pulse rounded" />
+                </div>
+                <div className="flex justify-end">
+                    <div className="h-10 w-32 bg-muted animate-pulse rounded" />
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -103,7 +199,7 @@ export function ProfileForm() {
                             type="text"
                             placeholder={t('namePlaceholder')}
                             error={form.formState.errors.name?.message}
-                            disabled={form.formState.isSubmitting}
+                            disabled={form.formState.isSubmitting || isLoading}
                         />
                     </motion.div>
 
@@ -120,7 +216,7 @@ export function ProfileForm() {
                             type="email"
                             placeholder={t('emailPlaceholder')}
                             error={form.formState.errors.email?.message}
-                            disabled={form.formState.isSubmitting}
+                            disabled={form.formState.isSubmitting || isLoading}
                         />
                     </motion.div>
                 </div>
@@ -139,7 +235,7 @@ export function ProfileForm() {
                             type="tel"
                             placeholder={t('phonePlaceholder')}
                             error={form.formState.errors.phone?.message}
-                            disabled={form.formState.isSubmitting}
+                            disabled={form.formState.isSubmitting || isLoading}
                         />
                     </motion.div>
 
@@ -156,7 +252,7 @@ export function ProfileForm() {
                             type="url"
                             placeholder={t('websitePlaceholder')}
                             error={form.formState.errors.website?.message}
-                            disabled={form.formState.isSubmitting}
+                            disabled={form.formState.isSubmitting || isLoading}
                         />
                     </motion.div>
                 </div>
@@ -174,7 +270,7 @@ export function ProfileForm() {
                         type="text"
                         placeholder={t('locationPlaceholder')}
                         error={form.formState.errors.location?.message}
-                        disabled={form.formState.isSubmitting}
+                        disabled={form.formState.isSubmitting || isLoading}
                     />
                 </motion.div>
 
@@ -191,7 +287,7 @@ export function ProfileForm() {
                         rows={4}
                         placeholder={t('bioPlaceholder')}
                         error={form.formState.errors.bio?.message}
-                        disabled={form.formState.isSubmitting}
+                        disabled={form.formState.isSubmitting || isLoading}
                     />
                 </motion.div>
 
@@ -203,7 +299,7 @@ export function ProfileForm() {
                 >
                     <Button
                         type="submit"
-                        disabled={form.formState.isSubmitting}
+                        disabled={form.formState.isSubmitting || isLoading}
                         {...buttonHover}
                     >
                         {form.formState.isSubmitting ? (

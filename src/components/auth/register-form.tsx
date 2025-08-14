@@ -4,18 +4,20 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { registerSchema, type RegisterInput } from '@/schemas/auth-schema'
 import { registerAction } from '@/actions/auth-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { FadeIn } from '@/components/ui/animations/fade-in'
-import { buttonHover } from '@/lib/animations'
+// import { FadeIn } from '@/components/ui/animations/fade-in'
+// import { buttonHover } from '@/lib/animations'
 import { useTranslations } from 'next-intl'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export function RegisterForm() {
   const t = useTranslations('Auth.register')
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
@@ -42,6 +44,12 @@ export function RegisterForm() {
     try {
       const result = await registerAction(formData)
       
+      if (result?.success && result?.data?.redirectTo) {
+        // 註冊成功，客戶端重定向
+        router.push(result.data.redirectTo)
+        return
+      }
+      
       if (result?.error) {
         setServerError(result.error)
       }
@@ -60,7 +68,7 @@ export function RegisterForm() {
   }
 
   return (
-    <FadeIn className="w-full">
+    <div className="w-full">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {serverError && (
           <motion.div
@@ -178,7 +186,7 @@ export function RegisterForm() {
             type="submit"
             className="w-full"
             disabled={form.formState.isSubmitting}
-            {...buttonHover}
+
           >
             {form.formState.isSubmitting ? (
               <>
@@ -191,6 +199,6 @@ export function RegisterForm() {
           </Button>
         </motion.div>
       </form>
-    </FadeIn>
+    </div>
   )
 }

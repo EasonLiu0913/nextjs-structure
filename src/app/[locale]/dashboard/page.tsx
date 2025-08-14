@@ -1,14 +1,16 @@
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FadeIn } from '@/components/ui/animations/fade-in'
 import { BarChart3, Users, TrendingUp, Activity } from 'lucide-react'
+import Link from 'next/link'
 
 interface DashboardPageProps {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
-export default function DashboardPage({ params: { locale } }: DashboardPageProps) {
-  const t = useTranslations('Dashboard')
+export default async function DashboardPage({ params }: DashboardPageProps) {
+  const { locale } = await params
+  const t = await getTranslations('Dashboard')
 
   const stats = [
     {
@@ -102,22 +104,22 @@ export default function DashboardPage({ params: { locale } }: DashboardPageProps
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <button className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                <Link href={`/${locale}/dashboard/users`} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors block">
                   <Users className="h-6 w-6 mb-2 text-blue-600" />
                   <p className="text-sm font-medium">{t('quickActions.users')}</p>
-                </button>
-                <button className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                </Link>
+                <Link href={`/${locale}/dashboard/reports`} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors block">
                   <BarChart3 className="h-6 w-6 mb-2 text-green-600" />
                   <p className="text-sm font-medium">{t('quickActions.reports')}</p>
-                </button>
-                <button className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                </Link>
+                <Link href={`/${locale}/dashboard/analytics`} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors block">
                   <TrendingUp className="h-6 w-6 mb-2 text-purple-600" />
                   <p className="text-sm font-medium">{t('quickActions.analytics')}</p>
-                </button>
-                <button className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                </Link>
+                <Link href={`/${locale}/dashboard/settings`} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors block">
                   <Activity className="h-6 w-6 mb-2 text-orange-600" />
                   <p className="text-sm font-medium">{t('quickActions.settings')}</p>
-                </button>
+                </Link>
               </div>
             </CardContent>
           </Card>

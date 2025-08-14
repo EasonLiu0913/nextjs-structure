@@ -5,11 +5,15 @@ import { notFound } from 'next/navigation'
 export const locales = ['en', 'zh'] as const
 export const defaultLocale = 'en' as const
 
-export default getRequestConfig(async ({ locale }) => {
+export default getRequestConfig(async ({ requestLocale }) => {
+  // 獲取語言設定
+  const locale = await requestLocale
+  
   // 驗證語言是否支援
-  if (!locales.includes(locale as any)) notFound()
+  if (!locale || !locales.includes(locale as any)) notFound()
 
   return {
+    locale,
     messages: (await import(`../../messages/${locale}.json`)).default
   }
 })

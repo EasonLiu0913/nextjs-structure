@@ -3,16 +3,18 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
+import { AuthSessionProvider } from '@/components/providers/session-provider'
 
 interface LocaleLayoutProps {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export default async function LocaleLayout({
   children,
-  params: { locale }
+  params
 }: LocaleLayoutProps) {
+  const { locale } = await params
   // 驗證語言是否支援
   const locales = ['en', 'zh']
   if (!locales.includes(locale)) {
@@ -23,14 +25,16 @@ export default async function LocaleLayout({
   const messages = await getMessages()
 
   return (
-    <NextIntlClientProvider messages={messages}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-      </div>
-    </NextIntlClientProvider>
+    <AuthSessionProvider>
+      <NextIntlClientProvider messages={messages}>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
+      </NextIntlClientProvider>
+    </AuthSessionProvider>
   )
 }

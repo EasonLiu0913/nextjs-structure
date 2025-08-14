@@ -12,6 +12,7 @@ import {
   sanitizeDTO
 } from '@/dto'
 import { userProfileSchema, userPreferencesSchema } from '@/schemas/user-schema'
+import { userPreferencesSchema as settingsPreferencesSchema, type UserPreferencesInput } from '@/schemas/settings-schema'
 
 // 更新使用者個人資料
 export async function updateProfileAction(formData: FormData) {
@@ -31,23 +32,20 @@ export async function updateProfileAction(formData: FormData) {
     // 這裡應該更新使用者資料到資料庫
     console.log('Updating user profile:', cleanData)
     
-    // 模擬回應資料
-    const updatedProfile = UserResponseMapper.toUserProfile({
+    // 模擬資料庫更新
+    const updatedProfile = {
       id: '1',
-      ...cleanData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        ...cleanData,
-        language: 'en'
-      },
-      stats: {
-        loginCount: 10,
-        accountAge: 30
-      }
-    })
+      name: cleanData.name,
+      email: cleanData.email,
+      phone: cleanData.phone || '',
+      bio: cleanData.bio || '',
+      website: cleanData.website || '',
+      location: cleanData.location || '',
+      updatedAt: new Date().toISOString()
+    }
     
     // 重新驗證頁面快取
+    revalidatePath('/settings')
     revalidatePath('/profile')
     
     return createActionSuccess(updatedProfile, 'Profile updated successfully')
@@ -82,6 +80,41 @@ export async function updatePreferencesAction(formData: FormData) {
     revalidatePath('/settings')
     
     return createActionSuccess(updatedPreferences, 'Preferences updated successfully')
+    
+  } catch (error) {
+    console.error('Preferences update error:', error)
+    return createActionError('An error occurred while updating preferences')
+  }
+}
+
+// 更新使用者設定偏好 (新版本)
+export async function updateUserPreferencesAction(data: UserPreferencesInput) {
+  try {
+    // 驗證資料
+    const validation = validateDTO(settingsPreferencesSchema, data)
+    if (!validation.success) {
+      return createValidationError(validation.errors || {})
+    }
+    
+    // 清理資料
+    const cleanData = sanitizeDTO(validation.data!)
+    
+    // 這裡應該更新使用者偏好到資料庫
+    console.log('Updating user preferences:', cleanData)
+    
+    // 模擬資料庫更新
+    const updatedPreferences = {
+      id: '1',
+      userId: '1',
+      ...cleanData,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    
+    revalidatePath('/settings/preferences')
+    revalidatePath('/settings')
+    
+    return createActionSuccess(updatedPreferences)
     
   } catch (error) {
     console.error('Preferences update error:', error)
@@ -161,6 +194,60 @@ export async function uploadAvatarAction(formData: FormData) {
   } catch (error) {
     console.error('Avatar upload error:', error)
     return createActionError('An error occurred while uploading avatar')
+  }
+}
+
+// 獲取使用者個人資料
+export async function getUserProfileAction() {
+  try {
+    // 這裡應該從資料庫獲取使用者資料
+    // 模擬從資料庫獲取的資料
+    const userProfile = {
+      id: '1',
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      phone: '+1234567890',
+      bio: 'Software developer passionate about creating amazing user experiences.',
+      website: 'https://johndoe.dev',
+      location: 'San Francisco, CA',
+      createdAt: new Date('2024-01-01').toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+    
+    return createActionSuccess(userProfile)
+    
+  } catch (error) {
+    console.error('Get user profile error:', error)
+    return createActionError('Failed to load user profile')
+  }
+}
+
+// 獲取使用者偏好設定
+export async function getUserPreferencesAction() {
+  try {
+    // 這裡應該從資料庫獲取使用者偏好設定
+    // 模擬從資料庫獲取的資料
+    const userPreferences = {
+      id: '1',
+      userId: '1',
+      language: 'zh' as const,
+      theme: 'system' as const,
+      timezone: 'Asia/Taipei',
+      emailNotifications: true,
+      pushNotifications: true,
+      marketingEmails: false,
+      profilePublic: true,
+      showEmail: false,
+      allowMessages: true,
+      createdAt: new Date('2024-01-01'),
+      updatedAt: new Date()
+    }
+    
+    return createActionSuccess(userPreferences)
+    
+  } catch (error) {
+    console.error('Get user preferences error:', error)
+    return createActionError('Failed to load user preferences')
   }
 }
 

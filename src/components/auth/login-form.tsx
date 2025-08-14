@@ -4,18 +4,20 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { loginSchema, type LoginInput } from '@/schemas/auth-schema'
-import { loginAction } from '@/actions/auth-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { FadeIn } from '@/components/ui/animations/fade-in'
-import { buttonHover } from '@/lib/animations'
+// import { FadeIn } from '@/components/ui/animations/fade-in'
+// import { buttonHover } from '@/lib/animations'
 import { useTranslations } from 'next-intl'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export function LoginForm() {
   const t = useTranslations('Auth.login')
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
@@ -30,32 +32,27 @@ export function LoginForm() {
   const onSubmit = async (data: LoginInput) => {
     setServerError(null)
     
-    const formData = new FormData()
-    formData.append('email', data.email)
-    formData.append('password', data.password)
-    
     try {
-      const result = await loginAction(formData)
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
       
       if (result?.error) {
-        setServerError(result.error)
-      }
-      if (result?.fieldErrors) {
-        Object.entries(result.fieldErrors).forEach(([field, errors]) => {
-          if (errors && Array.isArray(errors) && errors.length > 0) {
-            form.setError(field as keyof LoginInput, {
-              message: errors[0]
-            })
-          }
-        })
+        setServerError('Invalid email or password')
+      } else if (result?.ok) {
+        // 登入成功，重定向到儀表板
+        router.push('/en/dashboard')
       }
     } catch (error) {
+      console.error('Login error:', error)
       setServerError('An unexpected error occurred')
     }
   }
 
   return (
-    <FadeIn className="w-full">
+    <div className="w-full">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {serverError && (
           <motion.div
@@ -125,7 +122,6 @@ export function LoginForm() {
             type="submit"
             className="w-full"
             disabled={form.formState.isSubmitting}
-            {...buttonHover}
           >
             {form.formState.isSubmitting ? (
               <>
@@ -153,6 +149,6 @@ export function LoginForm() {
           </button>
         </motion.div>
       </form>
-    </FadeIn>
+    </div>
   )
 }

@@ -8,8 +8,15 @@ export function useAnalytics() {
     eventName: string,
     properties?: Record<string, string | number | boolean>
   ) => {
-    if (typeof window !== 'undefined' && window.va) {
-      window.va('track', eventName, properties)
+    if (typeof window !== 'undefined' && 
+        window.va && 
+        typeof window.va === 'function') {
+      try {
+        const safeProperties = properties && typeof properties === 'object' ? properties : {}
+        ;(window as any).va('event', eventName, safeProperties)
+      } catch (error) {
+        console.warn('Analytics tracking failed:', error)
+      }
     }
   }, [])
 

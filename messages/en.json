@@ -118,7 +118,101 @@
       "bio": "Bio",
       "bioPlaceholder": "Tell us about yourself",
       "save": "Save Changes",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "updateSuccess": "Profile updated successfully!",
+      "unexpectedError": "An unexpected error occurred",
+      "loadError": "Failed to load profile data"
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "description": "Manage your account settings and preferences",
+    "navigation": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "security": "Security",
+      "avatar": "Avatar",
+      "data": "Data"
+    },
+    "profile": {
+      "title": "Profile Settings",
+      "description": "Manage your personal information and account details",
+      "error": "Failed to load profile settings",
+      "retry": "Try again"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Customize your account preferences and experience",
+      "save": "Save Preferences",
+      "saving": "Saving...",
+      "updateSuccess": "Preferences updated successfully",
+      "updateError": "Failed to update preferences",
+      "unexpectedError": "An unexpected error occurred",
+      "language": {
+        "title": "Language & Display",
+        "description": "Configure your language and display preferences",
+        "label": "Language",
+        "placeholder": "Select language",
+        "help": "Choose your preferred language for the interface"
+      },
+      "theme": {
+        "label": "Theme",
+        "placeholder": "Select theme",
+        "help": "Choose your preferred color theme",
+        "preview": "live preview",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "timezone": {
+        "label": "Timezone",
+        "placeholder": "Select timezone",
+        "help": "Choose your timezone for date and time display"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage how you receive notifications",
+        "email": {
+          "label": "Email Notifications",
+          "description": "Receive notifications via email"
+        },
+        "push": {
+          "label": "Push Notifications",
+          "description": "Receive push notifications in your browser"
+        },
+        "marketing": {
+          "label": "Marketing Emails",
+          "description": "Receive promotional emails and updates"
+        }
+      },
+      "privacy": {
+        "title": "Privacy Settings",
+        "description": "Control your privacy and visibility settings",
+        "profilePublic": {
+          "label": "Public Profile",
+          "description": "Make your profile visible to other users"
+        },
+        "showEmail": {
+          "label": "Show Email",
+          "description": "Display your email address on your profile"
+        },
+        "allowMessages": {
+          "label": "Allow Messages",
+          "description": "Allow other users to send you messages"
+        }
+      }
+    },
+    "security": {
+      "title": "Security Settings",
+      "description": "Manage your account security and privacy settings"
+    },
+    "avatar": {
+      "title": "Avatar Management",
+      "description": "Upload and manage your profile avatar"
+    },
+    "data": {
+      "title": "Data Management",
+      "description": "Export and manage your personal data"
     }
   },
   "Footer": {

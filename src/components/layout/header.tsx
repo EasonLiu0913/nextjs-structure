@@ -4,15 +4,18 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
-import { Menu, X, User, Settings, LogOut } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Menu, X, Settings, LogOut } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
 import { LanguageSwitcher } from './language-switcher'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
+  const { data: session, status } = useSession()
   const t = useTranslations('Navigation')
+  const locale = useLocale()
 
   const navigation = [
     { name: t('home'), href: '/' },
@@ -54,11 +57,39 @@ export function Header() {
             <LanguageSwitcher />
             
             {/* User Menu */}
-            <div className="relative">
-              <Button variant="ghost" size="sm">
-                <User className="h-4 w-4 mr-2" />
-                Account
-              </Button>
+            <div className="flex items-center space-x-2">
+              {status === 'loading' ? (
+                <div className="w-8 h-8 animate-pulse bg-gray-200 rounded-full" />
+              ) : session ? (
+                <>
+                  <span className="text-sm text-muted-foreground">
+                    {session.user?.name || session.user?.email}
+                  </span>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href={`/${locale}/settings`}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      {t('settings')}
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => signOut({ callbackUrl: `/${locale}` })}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {t('logout')}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="/en/login">Login</Link>
+                  </Button>
+                  <Button size="sm" asChild>
+                    <Link href="/en/register">Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
@@ -104,14 +135,28 @@ export function Header() {
               </div>
               
               <div className="flex flex-col space-y-2">
-                <Button variant="ghost" size="sm" className="justify-start">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-                <Button variant="ghost" size="sm" className="justify-start">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
+                {session && (
+                  <>
+                    <Button variant="ghost" size="sm" className="justify-start" asChild>
+                      <Link href={`/${locale}/settings`} onClick={() => setIsMenuOpen(false)}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        {t('settings')}
+                      </Link>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="justify-start"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        signOut({ callbackUrl: `/${locale}` })
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      {t('logout')}
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </motion.div>

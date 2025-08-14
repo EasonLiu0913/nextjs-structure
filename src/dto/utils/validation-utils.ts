@@ -45,17 +45,17 @@ export function sanitizeDTO<T extends Record<string, any>>(data: T): T {
   const sanitized = { ...data }
   
   Object.keys(sanitized).forEach(key => {
-    const value = sanitized[key]
+    const value = (sanitized as any)[key]
     
     if (typeof value === 'string') {
       // 清理字串：移除前後空白、防止 XSS
-      sanitized[key] = sanitizeString(value)
+      (sanitized as any)[key] = sanitizeString(value)
     } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
       // 遞迴清理物件
-      sanitized[key] = sanitizeDTO(value)
+      (sanitized as any)[key] = sanitizeDTO(value)
     } else if (Array.isArray(value)) {
       // 清理陣列
-      sanitized[key] = value.map(item => 
+      (sanitized as any)[key] = value.map(item => 
         typeof item === 'string' ? sanitizeString(item) :
         typeof item === 'object' && item !== null ? sanitizeDTO(item) :
         item
@@ -181,9 +181,9 @@ export function maskSensitiveData<T extends Record<string, any>>(
   
   Object.keys(masked).forEach(key => {
     if (sensitiveFields.some(field => key.toLowerCase().includes(field.toLowerCase()))) {
-      masked[key] = '***MASKED***'
-    } else if (typeof masked[key] === 'object' && masked[key] !== null && !Array.isArray(masked[key])) {
-      masked[key] = maskSensitiveData(masked[key], sensitiveFields)
+      (masked as any)[key] = '***MASKED***'
+    } else if (typeof (masked as any)[key] === 'object' && (masked as any)[key] !== null && !Array.isArray((masked as any)[key])) {
+      (masked as any)[key] = maskSensitiveData((masked as any)[key], sensitiveFields)
     }
   })
   

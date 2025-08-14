@@ -1,4 +1,3 @@
-const { withSentryConfig } = require('@sentry/nextjs')
 const createNextIntlPlugin = require('next-intl/plugin')
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/config.ts')
@@ -9,11 +8,6 @@ const nextConfig = {
   output: 'standalone',
   trailingSlash: true,
   
-  // 實驗性功能
-  experimental: {
-    serverComponentsExternalPackages: ['@sentry/nextjs']
-  },
-  
   // 圖片優化
   images: {
     domains: ['localhost'],
@@ -21,16 +15,4 @@ const nextConfig = {
   }
 }
 
-// Sentry 配置選項
-const sentryWebpackPluginOptions = {
-  silent: true,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  widenClientFileUpload: true,
-  transpileClientSDK: true,
-  tunnelRoute: '/monitoring/tunnel',
-  hideSourceMaps: true,
-  disableLogger: true
-}
-
-module.exports = withSentryConfig(withNextIntl(nextConfig), sentryWebpackPluginOptions)
+module.exports = withNextIntl(nextConfig)

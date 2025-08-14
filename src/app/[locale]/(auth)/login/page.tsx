@@ -1,13 +1,14 @@
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { LoginForm } from '@/components/auth/login-form'
 import Link from 'next/link'
 
 interface LoginPageProps {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
-export default function LoginPage({ params: { locale } }: LoginPageProps) {
-  const t = useTranslations('Auth')
+export default async function LoginPage({ params }: LoginPageProps) {
+  const { locale } = await params
+  const t = await getTranslations('Auth')
 
   return (
     <div className="space-y-6">

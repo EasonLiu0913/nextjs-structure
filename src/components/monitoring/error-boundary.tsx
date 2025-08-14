@@ -31,7 +31,7 @@ export class ErrorBoundary extends React.Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // 發送錯誤到 Sentry
     Sentry.withScope((scope) => {
-      scope.setContext('errorInfo', errorInfo)
+      scope.setContext('errorInfo', errorInfo as any)
       Sentry.captureException(error)
     })
   }
