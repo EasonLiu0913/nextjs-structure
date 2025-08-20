@@ -214,7 +214,7 @@ jobs:
     
     steps:
     - name: Notify cleanup completion
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: success
         text: |
@@ -227,4 +227,5 @@ jobs:
           - Branches: ${{ needs.cleanup-branches.result }}
           
           💾 Storage space has been optimized
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

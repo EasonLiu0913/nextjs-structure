@@ -183,7 +183,7 @@ jobs:
     steps:
     - name: Notify success
       if: ${{ needs.build-and-push.result == 'success' && needs.security-scan.result == 'success' && needs.test-image.result == 'success' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: success
         text: |
@@ -194,11 +194,12 @@ jobs:
           🧪 Container tests: Passed
           
           Ready for deployment! 🚀
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify failure
       if: ${{ needs.build-and-push.result == 'failure' || needs.security-scan.result == 'failure' || needs.test-image.result == 'failure' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: failure
         text: |
@@ -209,4 +210,5 @@ jobs:
           🧪 Tests: ${{ needs.test-image.result }}
           
           Please check the logs for details.
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

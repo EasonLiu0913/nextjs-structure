@@ -326,7 +326,7 @@ jobs:
     steps:
     - name: Notify successful deployment
       if: ${{ needs.deploy-production.result == 'success' && needs.post-deployment-tests.result == 'success' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: success
         text: |
@@ -338,11 +338,12 @@ jobs:
           
           ✅ All post-deployment tests passed
           📊 Performance audit completed
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify failed deployment
       if: ${{ needs.deploy-production.result == 'failure' || needs.post-deployment-tests.result == 'failure' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: failure
         text: |
@@ -353,4 +354,5 @@ jobs:
           
           🔄 Automatic rollback may have been triggered
           Please check the GitHub Actions logs immediately.
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

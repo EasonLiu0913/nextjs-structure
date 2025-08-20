@@ -173,7 +173,7 @@ jobs:
     steps:
     - name: Notify successful deployment
       if: ${{ needs.deploy-staging.result == 'success' && needs.smoke-tests.result == 'success' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: success
         text: |
@@ -184,11 +184,12 @@ jobs:
           👤 Author: ${{ github.actor }}
           
           ✅ All smoke tests passed
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify failed deployment
       if: ${{ needs.deploy-staging.result == 'failure' || needs.smoke-tests.result == 'failure' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: failure
         text: |
@@ -198,7 +199,8 @@ jobs:
           👤 Author: ${{ github.actor }}
           
           Please check the GitHub Actions logs for details.
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   # 建立 GitHub Release (如果是 tag)
   create-release:

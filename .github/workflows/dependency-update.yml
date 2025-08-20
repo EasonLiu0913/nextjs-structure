@@ -92,7 +92,7 @@ jobs:
     
     - name: Notify Slack
       if: steps.check_updates.outputs.has_updates == 'true'
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: success
         text: |
@@ -100,4 +100,5 @@ jobs:
           
           🔗 Please review the automated dependency updates
           ✅ All tests passed
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

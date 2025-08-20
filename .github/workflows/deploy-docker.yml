@@ -213,7 +213,7 @@ jobs:
     steps:
     - name: Notify successful deployment
       if: ${{ needs.deploy-aci.result == 'success' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: success
         text: |
@@ -224,11 +224,12 @@ jobs:
           🔗 URL: http://${{ env.DNS_LABEL }}.eastus.azurecontainer.io
           
           Container is ready! ✅
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify failed deployment
       if: ${{ needs.deploy-aci.result == 'failure' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
         status: failure
         text: |
@@ -238,4 +239,5 @@ jobs:
           🌍 Environment: ${{ env.ENVIRONMENT }}
           
           Please check the deployment logs.
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

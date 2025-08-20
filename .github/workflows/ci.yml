@@ -251,22 +251,18 @@ jobs:
     steps:
     - name: Notify Slack on success
       if: ${{ needs.lint-and-type-check.result == 'success' && needs.unit-tests.result == 'success' && needs.build.result == 'success' && needs.e2e-tests.result == 'success' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
-        payload: |
-          {
-            "text": "✅ CI Pipeline passed for ${{ github.ref }}"
-          }
+        status: success
+        text: "✅ CI Pipeline passed for ${{ github.ref }}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify Slack on failure
       if: ${{ needs.lint-and-type-check.result == 'failure' || needs.unit-tests.result == 'failure' || needs.build.result == 'failure' || needs.e2e-tests.result == 'failure' }}
-      uses: slackapi/slack-github-action@v1
+      uses: 8398a7/action-slack@v3
       with:
-        payload: |
-          {
-            "text": "❌ CI Pipeline failed for ${{ github.ref }}"
-          }
+        status: failure
+        text: "❌ CI Pipeline failed for ${{ github.ref }}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
