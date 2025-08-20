@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { registerSchema, type RegisterInput } from '@/schemas/auth-schema'
+import { createRegisterSchema, type RegisterInput } from '@/schemas/auth-schema-i18n'
 import { registerAction } from '@/actions/auth-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,14 +16,19 @@ import { useTranslations } from 'next-intl'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export function RegisterForm() {
-  const t = useTranslations('Auth.register')
+  const t = useTranslations()
+  const tRegister = useTranslations('Auth.register')
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
+  // Create internationalized schema
+  const registerSchema = createRegisterSchema(t)
+
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange', // Trigger validation on every change
     defaultValues: {
       name: '',
       email: '',
@@ -87,12 +92,12 @@ export function RegisterForm() {
           transition={{ delay: 0.1 }}
         >
           <label className="block text-sm font-medium mb-2">
-            {t('name')}
+            {tRegister('name')}
           </label>
           <Input
             {...form.register('name')}
             type="text"
-            placeholder={t('namePlaceholder')}
+            placeholder={tRegister('namePlaceholder')}
             error={form.formState.errors.name?.message}
             disabled={form.formState.isSubmitting}
           />
@@ -104,12 +109,12 @@ export function RegisterForm() {
           transition={{ delay: 0.2 }}
         >
           <label className="block text-sm font-medium mb-2">
-            {t('email')}
+            {tRegister('email')}
           </label>
           <Input
             {...form.register('email')}
             type="email"
-            placeholder={t('emailPlaceholder')}
+            placeholder={tRegister('emailPlaceholder')}
             error={form.formState.errors.email?.message}
             disabled={form.formState.isSubmitting}
           />
@@ -121,13 +126,13 @@ export function RegisterForm() {
           transition={{ delay: 0.3 }}
         >
           <label className="block text-sm font-medium mb-2">
-            {t('password')}
+            {tRegister('password')}
           </label>
           <div className="relative">
             <Input
               {...form.register('password')}
               type={showPassword ? 'text' : 'password'}
-              placeholder={t('passwordPlaceholder')}
+              placeholder={tRegister('passwordPlaceholder')}
               error={form.formState.errors.password?.message}
               disabled={form.formState.isSubmitting}
             />
@@ -135,6 +140,7 @@ export function RegisterForm() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+              aria-label="Toggle password visibility"
               disabled={form.formState.isSubmitting}
             >
               {showPassword ? (
@@ -152,13 +158,13 @@ export function RegisterForm() {
           transition={{ delay: 0.4 }}
         >
           <label className="block text-sm font-medium mb-2">
-            {t('confirmPassword')}
+            {tRegister('confirmPassword')}
           </label>
           <div className="relative">
             <Input
               {...form.register('confirmPassword')}
               type={showConfirmPassword ? 'text' : 'password'}
-              placeholder={t('confirmPasswordPlaceholder')}
+              placeholder={tRegister('confirmPasswordPlaceholder')}
               error={form.formState.errors.confirmPassword?.message}
               disabled={form.formState.isSubmitting}
             />
@@ -166,6 +172,7 @@ export function RegisterForm() {
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+              aria-label="Toggle confirm password visibility"
               disabled={form.formState.isSubmitting}
             >
               {showConfirmPassword ? (
@@ -191,10 +198,10 @@ export function RegisterForm() {
             {form.formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('creatingAccount')}
+                {tRegister('creatingAccount')}
               </>
             ) : (
-              t('createAccount')
+              tRegister('createAccount')
             )}
           </Button>
         </motion.div>

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { RegisterForm } from '@/components/auth/register-form'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Create Account - Next.js Enterprise App',
+  description: 'Create your account to get started with our platform.',
+}
 
 interface RegisterPageProps {
   params: Promise<{ locale: string }>

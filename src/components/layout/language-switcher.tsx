@@ -34,6 +34,7 @@ export function LanguageSwitcher() {
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2"
+        aria-label="Language switcher"
       >
         <Globe className="h-4 w-4" />
         <span className="hidden sm:inline">{currentLanguage.name}</span>

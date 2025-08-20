@@ -8,18 +8,9 @@ async function globalSetup(config: FullConfig) {
   const page = await browser.newPage()
   
   try {
-    // 檢查應用程式是否正在運行
-    console.log('📡 Checking if application is running...')
-    await page.goto('http://localhost:3000/api/health', { timeout: 10000 })
-    
-    const response = await page.textContent('body')
-    const healthData = JSON.parse(response || '{}')
-    
-    if (healthData.status === 'ok') {
-      console.log('✅ Application is running and healthy')
-    } else {
-      throw new Error('Application health check failed')
-    }
+    // Playwright's webServer should handle server startup
+    // Just do basic setup tasks here
+    console.log('⚡ Application should be started by Playwright webServer')
     
     // 設定測試資料（如果需要）
     console.log('🗄️ Setting up test data...')
@@ -29,8 +20,11 @@ async function globalSetup(config: FullConfig) {
     
     // 預熱應用程式
     console.log('🔥 Warming up application...')
-    await page.goto('http://localhost:3000/en')
-    await page.waitForLoadState('networkidle')
+    await page.goto('http://localhost:3000/en', { waitUntil: 'networkidle' })
+    
+    // 確認頁面載入成功
+    const pageTitle = await page.title()
+    console.log(`📄 Page loaded successfully: ${pageTitle}`)
     
     console.log('✅ Global setup completed successfully')
     

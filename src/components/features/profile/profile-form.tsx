@@ -23,6 +23,7 @@ export function ProfileForm() {
 
     const form = useForm<UserProfileInput>({
         resolver: zodResolver(userProfileSchema),
+        mode: 'onChange', // Trigger validation on every change
         defaultValues: {
             name: '',
             email: '',

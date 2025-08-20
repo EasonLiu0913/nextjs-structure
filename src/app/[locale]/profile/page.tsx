@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProfileForm } from '@/components/features/profile/profile-form'
+
+export const metadata: Metadata = {
+  title: 'Profile - Next.js Enterprise App',
+  description: 'Manage your account settings and preferences.',
+}
 
 interface ProfilePageProps {
   params: Promise<{ locale: string }>

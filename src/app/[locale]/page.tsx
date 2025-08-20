@@ -26,7 +26,7 @@ export default async function HomePage({ params }: HomePageProps) {
               <Link href={`/${locale}/dashboard`}>{t('getStarted')}</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href={`/${locale}/login`}>{t('learnMore')}</Link>
+              <Link href={`/${locale}/about`}>{t('learnMore')}</Link>
             </Button>
           </div>
         </div>

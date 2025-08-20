@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Menu, X, Settings, LogOut } from 'lucide-react'
@@ -18,10 +18,25 @@ export function Header() {
   const locale = useLocale()
 
   const navigation = [
-    { name: t('home'), href: '/' },
-    { name: t('dashboard'), href: '/dashboard' },
-    { name: t('profile'), href: '/profile' },
+    { name: t('home'), href: `/${locale}` },
+    { name: t('dashboard'), href: `/${locale}/dashboard` },
+    { name: t('profile'), href: `/${locale}/profile` },
   ]
+
+  // 監聽 viewport 變化，當切換到桌面版時關閉選單
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) { // md breakpoint (768px)
+        setIsMenuOpen(false)
+      }
+    }
+
+    // 添加事件監聽器
+    window.addEventListener('resize', handleResize)
+    
+    // 清理函數
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -97,6 +112,7 @@ export function Header() {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2"
+            aria-label="Menu"
           >
             {isMenuOpen ? (
               <X className="h-6 w-6" />
@@ -107,13 +123,14 @@ export function Header() {
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden py-4 border-t"
-          >
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="md:hidden py-4 border-t"
+            >
             <nav className="flex flex-col space-y-4">
               {navigation.map((item) => (
                 <Link
@@ -159,8 +176,9 @@ export function Header() {
                 )}
               </div>
             </nav>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   )

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { LoginForm } from '@/components/auth/login-form'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Sign In - Next.js Enterprise App',
+  description: 'Sign in to your account to access your dashboard and manage your profile.',
+}
 
 interface LoginPageProps {
   params: Promise<{ locale: string }>

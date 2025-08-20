@@ -6,23 +6,29 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { loginSchema, type LoginInput } from '@/schemas/auth-schema'
+import { createLoginSchema, type LoginInput } from '@/schemas/auth-schema-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 // import { FadeIn } from '@/components/ui/animations/fade-in'
 // import { buttonHover } from '@/lib/animations'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export function LoginForm() {
-  const t = useTranslations('Auth.login')
+  const t = useTranslations()
+  const tLogin = useTranslations('Auth.login')
+  const locale = useLocale()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
-
+  
+  // Create internationalized schema
+  const loginSchema = createLoginSchema(t)
+  
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange', // Trigger validation on every change
     defaultValues: {
       email: '',
       password: ''
@@ -33,17 +39,41 @@ export function LoginForm() {
     setServerError(null)
     
     try {
+      // Create locale-aware dashboard URL
+      const dashboardUrl = `/${locale}/dashboard`
+      
+      // Use consistent approach for all browsers but with WebKit-specific handling
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
         redirect: false,
+        callbackUrl: dashboardUrl
       })
       
       if (result?.error) {
         setServerError('Invalid email or password')
       } else if (result?.ok) {
-        // 登入成功，重定向到儀表板
-        router.push('/en/dashboard')
+        // WebKit needs special handling for navigation
+        const isWebKit = /AppleWebKit/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent)
+        
+        if (isWebKit) {
+          // For WebKit, wait a bit for session to be established, then force reload
+          setTimeout(() => {
+            window.location.replace(dashboardUrl)
+          }, 100)
+        } else if (result.url) {
+          // For other browsers, use NextAuth's provided URL
+          window.location.href = result.url
+        } else {
+          // Fallback to manual redirect
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+          
+          if (isMobile) {
+            window.location.href = dashboardUrl
+          } else {
+            router.push(dashboardUrl)
+          }
+        }
       }
     } catch (error) {
       console.error('Login error:', error)
@@ -70,13 +100,14 @@ export function LoginForm() {
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <label className="block text-sm font-medium mb-2">
-            {t('email')}
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
+            {tLogin('email')}
           </label>
           <Input
             {...form.register('email')}
+            id="email"
             type="email"
-            placeholder={t('emailPlaceholder')}
+            placeholder={tLogin('emailPlaceholder')}
             error={form.formState.errors.email?.message}
             disabled={form.formState.isSubmitting}
           />
@@ -87,14 +118,15 @@ export function LoginForm() {
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <label className="block text-sm font-medium mb-2">
-            {t('password')}
+          <label htmlFor="password" className="block text-sm font-medium mb-2">
+            {tLogin('password')}
           </label>
           <div className="relative">
             <Input
               {...form.register('password')}
+              id="password"
               type={showPassword ? 'text' : 'password'}
-              placeholder={t('passwordPlaceholder')}
+              placeholder={tLogin('passwordPlaceholder')}
               error={form.formState.errors.password?.message}
               disabled={form.formState.isSubmitting}
             />
@@ -102,6 +134,7 @@ export function LoginForm() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+              aria-label="Toggle password visibility"
               disabled={form.formState.isSubmitting}
             >
               {showPassword ? (
@@ -126,10 +159,10 @@ export function LoginForm() {
             {form.formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('signingIn')}
+                {tLogin('signingIn')}
               </>
             ) : (
-              t('signIn')
+              tLogin('signIn')
             )}
           </Button>
         </motion.div>
@@ -145,7 +178,7 @@ export function LoginForm() {
             className="text-sm text-primary hover:underline"
             disabled={form.formState.isSubmitting}
           >
-            {t('forgotPassword')}
+            {tLogin('forgotPassword')}
           </button>
         </motion.div>
       </form>

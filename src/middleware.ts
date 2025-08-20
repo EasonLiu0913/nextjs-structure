@@ -14,6 +14,10 @@ export async function middleware(request: NextRequest) {
   // 1. 處理國際化路由
   const response = intlMiddleware(request)
   
+  // 在 response headers 中注入路徑信息，供 not-found 頁面使用
+  response.headers.set('x-pathname', pathname)
+  response.headers.set('x-url', request.url)
+  
   // 2. 認證保護路由
   const protectedPaths = ['/dashboard', '/profile', '/admin']
   const isProtectedPath = protectedPaths.some(path => 

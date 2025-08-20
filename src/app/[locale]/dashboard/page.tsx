@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FadeIn } from '@/components/ui/animations/fade-in'
 import { BarChart3, Users, TrendingUp, Activity } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Dashboard - Next.js Enterprise App',
+  description: 'Your personal dashboard with analytics, statistics, and quick actions.',
+}
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>

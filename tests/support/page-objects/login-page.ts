@@ -16,7 +16,7 @@ export class LoginPage {
     this.passwordInput = page.locator('input[type="password"]')
     this.submitButton = page.locator('button[type="submit"]')
     this.errorMessage = page.locator('[role="alert"]')
-    this.registerLink = page.locator('text=Sign up')
+    this.registerLink = page.locator('a[href*="/register"]')
     this.forgotPasswordLink = page.locator('text=Forgot your password?')
     this.passwordToggle = page.locator('button[aria-label="Toggle password visibility"]')
   }

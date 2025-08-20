@@ -4,35 +4,35 @@ import { z } from 'zod'
 export const loginSchema = z.object({
   email: z
     .string()
-    .min(1, '請輸入電子郵件')
-    .email('請輸入有效的電子郵件格式'),
+    .min(1, 'Please enter your email')
+    .email('Please enter a valid email address'),
   password: z
     .string()
-    .min(1, '請輸入密碼')
-    .min(8, '密碼至少需要 8 個字元')
+    .min(1, 'Please enter your password')
+    .min(8, 'Password must be at least 8 characters')
 })
 
 // 註冊驗證
 export const registerSchema = z.object({
   name: z
     .string()
-    .min(1, '請輸入姓名')
-    .min(2, '姓名至少需要 2 個字元')
-    .max(50, '姓名不能超過 50 個字元'),
+    .min(1, 'Please enter your name')
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name cannot exceed 50 characters'),
   email: z
     .string()
-    .min(1, '請輸入電子郵件')
-    .email('請輸入有效的電子郵件格式'),
+    .min(1, 'Please enter your email')
+    .email('Please enter a valid email address'),
   password: z
     .string()
-    .min(8, '密碼至少需要 8 個字元')
+    .min(8, 'Password must be at least 8 characters')
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      '密碼需包含至少一個大寫字母、小寫字母和數字'
+      'Password must contain at least one uppercase letter, lowercase letter, and number'
     ),
-  confirmPassword: z.string()
+  confirmPassword: z.string().min(1, 'Please confirm your password')
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "密碼確認不一致",
+  message: "Passwords do not match",
   path: ["confirmPassword"]
 })
 

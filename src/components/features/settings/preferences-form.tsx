@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
+// import { Separator } from '@/components/ui/separator'
 import { userPreferencesSchema, defaultUserPreferences, type UserPreferencesInput } from '@/schemas/settings-schema'
 import { Globe, Moon, Sun, Monitor, Bell, Mail, MessageSquare, Eye, Shield } from 'lucide-react'
 

@@ -8,6 +8,8 @@ export class TestCommands {
    */
   async login(email = 'user@example.com', password = 'password123') {
     await this.page.goto('/en/login')
+
+    await this.page.waitForTimeout(2000)
     await this.page.fill('input[type="email"]', email)
     await this.page.fill('input[type="password"]', password)
     await this.page.click('button[type="submit"]')
@@ -18,16 +20,43 @@ export class TestCommands {
    * 登出應用程式
    */
   async logout() {
-    // 這需要根據實際的登出實作來調整
-    await this.page.click('text=Logout')
-    await this.page.waitForURL(/\/en\/login/)
+    const viewportSize = await this.page.viewportSize()
+    const isMobile = viewportSize && viewportSize.width < 768
+
+    if (!isMobile){
+      // 這需要根據實際的登出實作來調整
+      await this.page.click('text=Logout')
+      await this.page.waitForURL(/\/en\//)
+    }
+    else{
+      // 行動版：先開啟選單
+      await this.page.waitForTimeout(1000)
+      await this.page.click('[aria-label="Menu"]')
+      await this.page.waitForTimeout(1000)
+
+      await this.page.locator('text=Logout').nth(1).click()
+      await this.page.waitForURL(/\/en\//)
+    }
   }
 
   /**
    * 切換語言
    */
   async switchLanguage(language: 'en' | 'zh') {
-    await this.page.click('[aria-label="Language switcher"]')
+    // 檢查是否為行動版
+    const viewportSize = await this.page.viewportSize()
+    const isMobile = viewportSize && viewportSize.width < 768
+    
+    if (!isMobile) {
+      await this.page.waitForTimeout(2000)
+      await this.page.click('[aria-label="Language switcher"]')
+    }
+    else{
+      // 行動版：先開啟選單
+      await this.page.click('[aria-label="Menu"]')
+      await this.page.waitForTimeout(2000)
+      await this.page.click('.md\\:hidden [aria-label="Language switcher"]')
+    }
     
     if (language === 'zh') {
       await this.page.click('text=中文')
@@ -70,6 +99,7 @@ export class TestCommands {
     location?: string
     bio?: string
   }) {
+    await this.page.waitForTimeout(2000)
     if (data.name) await this.page.fill('input[name="name"]', data.name)
     if (data.email) await this.page.fill('input[name="email"]', data.email)
     if (data.phone) await this.page.fill('input[name="phone"]', data.phone)

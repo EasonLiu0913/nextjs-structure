@@ -9,7 +9,7 @@ import {
   createActionSuccess,
   createActionError,
   createValidationError,
-  zodErrorToFieldErrors,
+  // zodErrorToFieldErrors,
   validateDTO,
   sanitizeDTO
 } from '@/dto'
@@ -32,7 +32,7 @@ export async function loginAction(formData: FormData) {
     
     // 模擬驗證邏輯 (這個函數現在不會被使用，因為我們使用 NextAuth)
     if (cleanData.email === 'user@example.com' && cleanData.password === 'password123') {
-      return createActionSuccess({ redirectTo: '/en/dashboard' }, 'Login successful')
+      return createActionSuccess({ redirectTo: '/dashboard' }, 'Login successful')
     } else {
       return createActionError('Invalid email or password')
     }
@@ -73,7 +73,7 @@ export async function registerAction(formData: FormData) {
     })
     
     // 建立回應 DTO
-    const registerResponse = AuthResponseMapper.toRegisterResponse({
+    AuthResponseMapper.toRegisterResponse({
       user: {
         id: '1',
         name: cleanData.name,
@@ -85,7 +85,7 @@ export async function registerAction(formData: FormData) {
     })
     
     // 註冊成功，返回成功狀態
-    return createActionSuccess({ redirectTo: '/en/login' }, 'Registration successful')
+    return createActionSuccess({ redirectTo: '/login' }, 'Registration successful')
     
   } catch (error) {
     console.error('Registration error:', error)
@@ -98,7 +98,7 @@ export async function logoutAction() {
   try {
     // 這裡應該使用 NextAuth 的 signOut
     // await signOut({ redirect: false })
-    redirect('/en')
+    redirect('/')
   } catch (error) {
     console.error('Logout error:', error)
     return createActionError('An error occurred during logout')
@@ -118,7 +118,7 @@ export async function changePasswordAction(formData: FormData) {
     }
     
     // 清理資料
-    const cleanData = sanitizeDTO(validation.data!)
+    sanitizeDTO(validation.data!)
     
     // 這裡應該實作密碼更改邏輯
     // 1. 驗證目前密碼

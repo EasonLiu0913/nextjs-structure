@@ -44,7 +44,25 @@
     "settings": "Settings",
     "logout": "Logout"
   },
+  "NotFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "returnHome": "Return Home"
+  },
   "Auth": {
+    "validation": {
+      "emailRequired": "Please enter your email",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Please enter your password",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordRequirements": "Password must contain at least one uppercase letter, lowercase letter, and number",
+      "nameRequired": "Please enter your name",
+      "nameMinLength": "Name must be at least 2 characters",
+      "nameMaxLength": "Name cannot exceed 50 characters",
+      "passwordConfirmRequired": "Please confirm your password",
+      "passwordConfirmMismatch": "Passwords do not match",
+      "currentPasswordRequired": "Please enter your current password"
+    },
     "login": {
       "title": "Sign In",
       "subtitle": "Welcome back! Please sign in to your account.",
