@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { FileQuestion } from 'lucide-react'
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
 
 interface NotFoundProps {
   params?: Promise<{ locale?: string }> | { locale?: string }

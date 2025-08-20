@@ -13,7 +13,7 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const { locale } = await params
+  await params
   const t = await getTranslations('Profile')
 
   return (

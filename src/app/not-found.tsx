@@ -60,7 +60,7 @@ export default async function GlobalNotFound() {
         GLOBAL 404 | Detected Locale: {locale}
       </div>
       <div className="mb-4 text-xs text-gray-400 break-words max-w-md">
-        Debug: referer="{referer}", pathname="{pathname}", url="{url}"
+        Debug: referer=&quot;{referer}&quot;, pathname=&quot;{pathname}&quot;, url=&quot;{url}&quot;
       </div>
       <FileQuestion className="h-12 w-12 text-muted-foreground mb-4" />
       <h1 className="text-3xl font-bold mb-2">404 - {title}</h1>

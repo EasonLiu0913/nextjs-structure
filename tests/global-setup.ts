@@ -1,6 +1,6 @@
-import { chromium, FullConfig } from '@playwright/test'
+import { chromium } from '@playwright/test'
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup(): Promise<void> {
   console.log('🚀 Starting global test setup...')
   
   // 啟動瀏覽器進行設定

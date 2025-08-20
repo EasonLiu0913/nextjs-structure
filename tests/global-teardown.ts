@@ -1,6 +1,5 @@
-import { FullConfig } from '@playwright/test'
 
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown(): Promise<void> {
   console.log('🧹 Starting global test teardown...')
   
   try {

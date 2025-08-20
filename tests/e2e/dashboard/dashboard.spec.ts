@@ -134,8 +134,6 @@ test.describe('Dashboard', () => {
 
   test('should display correct statistics with animations', async ({ page }) => {
     // 檢查統計卡片是否有動畫效果
-    const statsCards = page.locator('[data-testid="stats-card"]')
-    
     // 如果有實作 data-testid，可以檢查動畫
     // 否則檢查卡片是否正確顯示
     await expect(page.locator('text=Total Users')).toBeVisible()

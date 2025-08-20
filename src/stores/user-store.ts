@@ -42,7 +42,7 @@ interface UserState {
   reset: () => void
 }
 
-export const useUserStore = create<UserState>((set, get) => ({
+export const useUserStore = create<UserState>((set) => ({
   profile: null,
   preferences: null,
   isLoading: false,

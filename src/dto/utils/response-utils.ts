@@ -86,7 +86,7 @@ export function createActionResponse<T>(
 // 建立 Server Action 成功回應
 export function createActionSuccess<T>(
   data?: T,
-  message?: string
+  _message?: string
 ): ActionResponse<T> {
   return {
     success: true,
