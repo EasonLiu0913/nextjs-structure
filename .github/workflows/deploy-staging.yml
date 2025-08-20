@@ -154,7 +154,7 @@ jobs:
         PLAYWRIGHT_BASE_URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net
     
     - name: Upload smoke test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: smoke-test-results
@@ -173,7 +173,7 @@ jobs:
     steps:
     - name: Notify successful deployment
       if: ${{ needs.deploy-staging.result == 'success' && needs.smoke-tests.result == 'success' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: success
         text: |
@@ -188,7 +188,7 @@ jobs:
     
     - name: Notify failed deployment
       if: ${{ needs.deploy-staging.result == 'failure' || needs.smoke-tests.result == 'failure' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: failure
         text: |

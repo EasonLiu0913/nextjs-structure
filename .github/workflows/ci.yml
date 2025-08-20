@@ -64,7 +64,7 @@ jobs:
       run: npm run test:coverage
     
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         file: ./coverage/lcov.info
         flags: unittests
@@ -98,7 +98,7 @@ jobs:
         NEXTAUTH_URL: "https://test.example.com"
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-files
         path: |
@@ -133,7 +133,7 @@ jobs:
       run: npx playwright install --with-deps ${{ matrix.browser }}
     
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-files
     
@@ -146,7 +146,7 @@ jobs:
         NEXTAUTH_URL: "http://localhost:3000"
     
     - name: Upload E2E test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: e2e-results-${{ matrix.browser }}
@@ -226,7 +226,7 @@ jobs:
       run: npm ci
     
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-files
     
@@ -251,16 +251,22 @@ jobs:
     steps:
     - name: Notify Slack on success
       if: ${{ needs.lint-and-type-check.result == 'success' && needs.unit-tests.result == 'success' && needs.build.result == 'success' && needs.e2e-tests.result == 'success' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
-        status: success
-        text: '✅ CI Pipeline passed for ${{ github.ref }}'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        payload: |
+          {
+            "text": "✅ CI Pipeline passed for ${{ github.ref }}"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify Slack on failure
       if: ${{ needs.lint-and-type-check.result == 'failure' || needs.unit-tests.result == 'failure' || needs.build.result == 'failure' || needs.e2e-tests.result == 'failure' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
-        status: failure
-        text: '❌ CI Pipeline failed for ${{ github.ref }}'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        payload: |
+          {
+            "text": "❌ CI Pipeline failed for ${{ github.ref }}"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

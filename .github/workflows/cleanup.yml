@@ -214,7 +214,7 @@ jobs:
     
     steps:
     - name: Notify cleanup completion
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: success
         text: |

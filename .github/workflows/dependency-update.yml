@@ -92,7 +92,7 @@ jobs:
     
     - name: Notify Slack
       if: steps.check_updates.outputs.has_updates == 'true'
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: success
         text: |

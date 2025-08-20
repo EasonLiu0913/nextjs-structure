@@ -326,7 +326,7 @@ jobs:
     steps:
     - name: Notify successful deployment
       if: ${{ needs.deploy-production.result == 'success' && needs.post-deployment-tests.result == 'success' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: success
         text: |
@@ -342,7 +342,7 @@ jobs:
     
     - name: Notify failed deployment
       if: ${{ needs.deploy-production.result == 'failure' || needs.post-deployment-tests.result == 'failure' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: failure
         text: |

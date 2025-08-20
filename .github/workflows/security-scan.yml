@@ -53,7 +53,7 @@ jobs:
       id: npm_audit
     
     - name: Upload audit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: npm-audit-report
         path: audit-report.json
@@ -76,7 +76,7 @@ jobs:
       continue-on-error: true
     
     - name: Upload Snyk report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: snyk-report
         path: snyk-report.json
@@ -168,7 +168,7 @@ jobs:
         echo "✅ No forbidden licenses found"
     
     - name: Upload license report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: license-report
         path: licenses.json
@@ -183,7 +183,7 @@ jobs:
     steps:
     - name: Notify on security issues
       if: ${{ needs.security-audit.result == 'failure' || needs.snyk-scan.result == 'failure' || needs.secret-scan.result == 'failure' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: failure
         text: |
@@ -200,7 +200,7 @@ jobs:
     
     - name: Notify on success
       if: ${{ needs.security-audit.result == 'success' && needs.snyk-scan.result == 'success' && needs.secret-scan.result == 'success' && needs.license-check.result == 'success' }}
-      uses: 8398a7/action-slack@v3
+      uses: slackapi/slack-github-action@v1
       with:
         status: success
         text: |
