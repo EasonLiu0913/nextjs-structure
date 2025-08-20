@@ -59,8 +59,10 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: |
-          NEXT_PUBLIC_APP_NAME=${{ secrets.STAGING_APP_NAME }}
-          NEXT_PUBLIC_APP_URL=${{ secrets.STAGING_APP_URL }}
+          NEXT_PUBLIC_APP_NAME=${{ secrets.STAGING_APP_NAME || 'NextJS Enterprise App' }}
+          NEXT_PUBLIC_APP_URL=${{ secrets.STAGING_APP_URL || 'http://localhost:3000' }}
+          NEXTAUTH_SECRET=${{ secrets.STAGING_NEXTAUTH_SECRET || 'default-secret-change-in-production' }}
+          NEXTAUTH_URL=${{ secrets.STAGING_NEXTAUTH_URL || 'http://localhost:3000' }}
     
     - name: Generate SBOM
       uses: anchore/sbom-action@v0

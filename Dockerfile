@@ -26,8 +26,19 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # 設定建置環境變數
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# 設定建置時需要的環境變數 (使用預設值)
+ARG NEXT_PUBLIC_APP_NAME="NextJS Enterprise App"
+ARG NEXT_PUBLIC_APP_URL="http://localhost:3000"
+ARG NEXTAUTH_SECRET="default-secret-change-in-production"
+ARG NEXTAUTH_URL="http://localhost:3000"
+
+ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 # 建置應用程式
 RUN npm run build
@@ -57,10 +68,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # 設定環境變數
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # 切換到非 root 使用者
 USER nextjs
