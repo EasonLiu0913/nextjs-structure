@@ -1,0 +1,32 @@
+{
+  "ignoreBinPackage": false,
+  "skipMissing": false,
+  "ignoreMatches": [
+    "@commitlint/cli",
+    "@commitlint/config-conventional",
+    "lint-staged",
+    "autoprefixer",
+    "postcss",
+    "cz-conventional-changelog",
+    "cz-customizable",
+    "@vitest/coverage-v8",
+    "prettier",
+    "husky",
+    "commitizen"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    ".next/**",
+    "out/**",
+    "dist/**",
+    "coverage/**"
+  ],
+  "specials": [
+    "eslint",
+    "jest",
+    "mocha",
+    "vitest",
+    "webpack",
+    "babel"
+  ]
+}
