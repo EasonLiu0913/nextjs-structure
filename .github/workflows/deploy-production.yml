@@ -325,7 +325,7 @@ jobs:
     
     steps:
     - name: Notify successful deployment
-      if: ${{ needs.deploy-production.result == 'success' && needs.post-deployment-tests.result == 'success' }}
+      if: ${{ secrets.SLACK_WEBHOOK != '' && needs.deploy-production.result == 'success' && needs.post-deployment-tests.result == 'success' }}
       uses: 8398a7/action-slack@v3
       with:
         status: success
@@ -342,7 +342,7 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify failed deployment
-      if: ${{ needs.deploy-production.result == 'failure' || needs.post-deployment-tests.result == 'failure' }}
+      if: ${{ secrets.SLACK_WEBHOOK != '' && (needs.deploy-production.result == 'failure' || needs.post-deployment-tests.result == 'failure') }}
       uses: 8398a7/action-slack@v3
       with:
         status: failure
@@ -356,3 +356,18 @@ jobs:
           Please check the GitHub Actions logs immediately.
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+    
+    - name: Log deployment result (no Slack)
+      if: ${{ secrets.SLACK_WEBHOOK == '' }}
+      run: |
+        if [[ "${{ needs.deploy-production.result }}" == "success" && "${{ needs.post-deployment-tests.result }}" == "success" ]]; then
+          echo "🎉 Production deployment successful!"
+          echo "🔗 URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo "👤 Author: ${{ github.actor }}"
+        else
+          echo "🚨 Production deployment failed!"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo "👤 Author: ${{ github.actor }}"
+        fi
+        echo "💬 Slack notifications are disabled (no webhook configured)"

@@ -131,7 +131,12 @@ jobs:
       run: npm ci
     
     - name: Install Playwright browsers
-      run: npx playwright install --with-deps ${{ matrix.browser }}
+      run: |
+        npx playwright install --with-deps ${{ matrix.browser }}
+        # 為了 global-setup.ts，也安裝 chromium 作為備選
+        if [[ "${{ matrix.browser }}" != "chromium" ]]; then
+          npx playwright install --with-deps chromium
+        fi
     
     - name: Download build artifacts
       uses: actions/download-artifact@v4
@@ -234,10 +239,18 @@ jobs:
     - name: Install Lighthouse CI
       run: npm install -g @lhci/cli@0.12.x
     
+    - name: Build application for performance test
+      run: npm run build
+      env:
+        NEXT_PUBLIC_APP_NAME: "Performance Test App"
+        NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+        NEXTAUTH_SECRET: "test-secret-for-performance"
+        NEXTAUTH_URL: "http://localhost:3000"
+    
     - name: Run Lighthouse CI
       run: |
         npm start &
-        sleep 10
+        sleep 15
         lhci autorun
       env:
         LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
@@ -251,7 +264,7 @@ jobs:
     
     steps:
     - name: Notify Slack on success
-      if: ${{ needs.lint-and-type-check.result == 'success' && needs.unit-tests.result == 'success' && needs.build.result == 'success' && needs.e2e-tests.result == 'success' }}
+      if: ${{ secrets.SLACK_WEBHOOK != '' && needs.lint-and-type-check.result == 'success' && needs.unit-tests.result == 'success' && needs.build.result == 'success' && needs.e2e-tests.result == 'success' }}
       uses: 8398a7/action-slack@v3
       with:
         status: success
@@ -260,10 +273,20 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
     
     - name: Notify Slack on failure
-      if: ${{ needs.lint-and-type-check.result == 'failure' || needs.unit-tests.result == 'failure' || needs.build.result == 'failure' || needs.e2e-tests.result == 'failure' }}
+      if: ${{ secrets.SLACK_WEBHOOK != '' && (needs.lint-and-type-check.result == 'failure' || needs.unit-tests.result == 'failure' || needs.build.result == 'failure' || needs.e2e-tests.result == 'failure') }}
       uses: 8398a7/action-slack@v3
       with:
         status: failure
         text: "❌ CI Pipeline failed for ${{ github.ref }}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+    
+    - name: Log completion (no Slack)
+      if: ${{ secrets.SLACK_WEBHOOK == '' }}
+      run: |
+        if [[ "${{ needs.lint-and-type-check.result }}" == "success" && "${{ needs.unit-tests.result }}" == "success" && "${{ needs.build.result }}" == "success" && "${{ needs.e2e-tests.result }}" == "success" ]]; then
+          echo "✅ CI Pipeline completed successfully for ${{ github.ref }}"
+        else
+          echo "❌ CI Pipeline had failures for ${{ github.ref }}"
+        fi
+        echo "💬 Slack notifications are disabled (no webhook configured)"
