@@ -122,13 +122,21 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Run TruffleHog
+    - name: Run TruffleHog (Full Scan)
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
       uses: trufflesecurity/trufflehog@main
       with:
         path: ./
-        base: main
-        head: HEAD
-        extra_args: --debug --only-verified
+        extra_args: --debug --only-verified --fail
+    
+    - name: Run TruffleHog (Diff Scan)
+      if: github.event_name == 'push' || github.event_name == 'pull_request'
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: ${{ github.event.before }}
+        head: ${{ github.sha }}
+        extra_args: --debug --only-verified --fail
 
   license-check:
     name: License Check
