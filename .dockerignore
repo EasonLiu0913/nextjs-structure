@@ -81,11 +81,11 @@ vitest.config.ts
 playwright.config.ts
 jest.config.js
 
-# 其他配置檔案
-tsconfig.json
+# 其他配置檔案 (保留建置必需的配置)
+# tsconfig.json - 需要用於建置
 tailwind.config.js
 postcss.config.js
-next.config.js
+# next.config.js - 需要用於建置
 
 # 臨時檔案
 tmp/
