@@ -67,7 +67,7 @@ jobs:
     - name: Generate SBOM
       uses: anchore/sbom-action@v0
       with:
-        image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+        image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         format: spdx-json
         output-file: sbom.spdx.json
     
@@ -197,7 +197,7 @@ jobs:
           
           Ready for deployment! 🚀
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     
     - name: Notify failure
       if: ${{ needs.build-and-push.result == 'failure' || needs.security-scan.result == 'failure' || needs.test-image.result == 'failure' }}
@@ -213,4 +213,4 @@ jobs:
           
           Please check the logs for details.
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

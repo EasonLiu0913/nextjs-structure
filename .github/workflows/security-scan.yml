@@ -164,12 +164,14 @@ jobs:
         echo "Checking licenses..."
         license-checker --json > licenses.json || echo "License checker completed with warnings"
         
-        # 檢查是否有禁用的授權
-        forbidden_licenses=("GPL-2.0" "GPL-3.0" "AGPL-1.0" "AGPL-3.0")
+        # 檢查是否有禁用的授權 (不包括 LGPL)
+        forbidden_licenses=("\"GPL-2.0\"" "\"GPL-3.0\"" "\"AGPL-1.0\"" "\"AGPL-3.0\"")
         
         for license in "${forbidden_licenses[@]}"; do
           if grep -q "$license" licenses.json 2>/dev/null; then
             echo "❌ Forbidden license found: $license"
+            echo "Found packages with forbidden license:"
+            cat licenses.json | jq -r --arg license "$license" 'to_entries[] | select(.value.licenses | tostring | contains($license)) | "\(.key): \(.value.licenses)"'
             exit 1
           fi
         done
@@ -206,7 +208,7 @@ jobs:
           
           🔍 Please review the security reports immediately.
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     
     - name: Notify on success
       if: ${{ needs.security-audit.result == 'success' && needs.snyk-scan.result == 'success' && needs.secret-scan.result == 'success' && needs.license-check.result == 'success' }}
@@ -222,4 +224,4 @@ jobs:
           - Secret Scan: No secrets detected
           - License Check: All licenses compliant
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
