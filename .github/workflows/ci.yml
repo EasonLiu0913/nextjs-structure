@@ -133,7 +133,7 @@ jobs:
     - name: Install Playwright browsers
       run: |
         npx playwright install --with-deps ${{ matrix.browser }}
-        # 為了 global-setup.ts，也安裝 chromium 作為備選
+        # 確保 chromium 可用於 global-setup.ts
         if [[ "${{ matrix.browser }}" != "chromium" ]]; then
           npx playwright install --with-deps chromium
         fi
@@ -237,7 +237,7 @@ jobs:
         name: build-files
     
     - name: Install Lighthouse CI
-      run: npm install -g @lhci/cli@0.12.x
+      run: npm install -g @lhci/cli@0.13.x
     
     - name: Build application for performance test
       run: npm run build

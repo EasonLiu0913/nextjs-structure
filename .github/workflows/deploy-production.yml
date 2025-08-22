@@ -133,7 +133,7 @@ jobs:
         cp -r public deployment/
         cp package.json deployment/
         cp package-lock.json deployment/
-        cp next.config.js deployment/
+        cp next.config.mjs deployment/
         
         # 如果有 standalone 建置
         if [ -d ".next/standalone" ]; then

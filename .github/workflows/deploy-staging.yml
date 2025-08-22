@@ -66,7 +66,7 @@ jobs:
         cp -r public deployment/
         cp package.json deployment/
         cp package-lock.json deployment/
-        cp next.config.js deployment/
+        cp next.config.mjs deployment/
         
         # 建立 standalone 部署包
         if [ -d ".next/standalone" ]; then
