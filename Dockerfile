@@ -37,7 +37,7 @@ ARG NEXTAUTH_URL="http://localhost:3000"
 ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
-# NEXTAUTH_SECRET 將在運行時設定，不在建置時暴露
+# NEXTAUTH_SECRET 將在運行時設定，不在建置時匯出
 
 # 建置應用程式
 RUN npm run build
@@ -75,7 +75,7 @@ ENV HOSTNAME="0.0.0.0"
 # 切換到非 root 使用者
 USER nextjs
 
-# 暴露端口
+# 開放埠號
 EXPOSE 3000
 
 # 健康檢查

@@ -21,7 +21,7 @@ COPY . .
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# 暴露端口
+# 開放埠號
 EXPOSE 3000
 
 # 啟動開發服務器
